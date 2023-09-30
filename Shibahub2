@@ -304,3 +304,46 @@ CombatB:AddToggle("FovFilled", {Text = "Filled", Default = false, Tooltip = 'Fil
 CombatB:AddSlider('FovTransparency', {Text = 'Transparency', Default = 100, Min = 0, Max = 100, Rounding = 2, Compact = true}):OnChanged(function() FovCircle.Transparency = Options.FovTransparency.Value / 100 end)
 CombatB:AddSlider('FovSides', {Text = 'Sides', Default = 14, Min = 3, Max = 64, Rounding = 0, Compact = true}):OnChanged(function() FovCircle.NumSides = Options.FovSides.Value end)
 CombatB:AddSlider('FovThickness', {Text = 'Thickness', Default = 0, Min = 0, Max = 10, Rounding = 0, Compact = true}):OnChanged(function() FovCircle.Thickness = Options.FovThickness.Value end)
+
+local OtherCombat = Tabs.Combat:AddRightTabbox()
+local OtherA = OtherCombat:AddTab('Gun Mods')
+local OtherB = OtherCombat:AddTab('HitSounds')
+
+OtherA:AddToggle("GEnabled", {Text = "Enabled", Default = false, Tooltip = 'Enables Gun Mods'})
+OtherA:AddToggle('GunMods_NoRecoil', {Text = 'No Recoil', Default = false}):OnChanged(function()
+    local RecoilCamera = VFX.RecoilCamera;
+    VFX.RecoilCamera = function(...)
+        if Toggles.GunMods_NoRecoil.Value and Toggles.GEnabled.Value then
+            return 0
+        else
+           return RecoilCamera(...)
+        end
+    end
+end)
+OtherB:AddDropdown('HeadEnabled', {Values = {"Test"}, Default = 1, Multi = false, Text = 'Headshot Sound'}):OnChanged(function()
+    if Options.HeadEnabled.Value == "None" then
+        return
+    end
+    --headshot_sound.SoundId = hit_sounds[Options.HeadEnabled.Value]
+end)
+OtherB:AddSlider('HeadVolume', {Text = 'Volume', Default = 1, Min = 0, Max = 10, Rounding = 2, Compact = true}):OnChanged(function()
+    --headshot_sound.Volume = Options.HeadVolume.Value
+end)
+OtherB:AddDropdown('BodyEnabled', {Values = {"Test"}, Default = 1, Multi = false, Text = 'Bodyshot Sound'}):OnChanged(function()
+    if Options.BodyEnabled.Value == "None" then 
+        return
+    end
+    --bodyshot_sound.SoundId =  hit_sounds[Options.BodyEnabled.Value]
+end)
+OtherB:AddSlider('BodyVolume', {Text = 'Volume', Default = 1, Min = 0, Max = 10, Rounding = 2, Compact = true}):OnChanged(function()
+   -- bodyshot_sound.Volume = Options.BodyVolume.Value
+end)
+
+local CombatResolver = Tabs.Combat:AddRightTabbox()
+local ResolveA = CombatResolver:AddTab('Resolver')
+
+ResolveA:AddToggle("ResolverEnabled", {Text = "Enabled", Default = false, Tooltip = 'Resolves Antiaim'})
+ResolveA:AddToggle("VelocityReEnabled", {Text = "Velocity Rebuilder", Default = false, Tooltip = 'Resolves Velocity Breaker'})
+ResolveA:AddToggle("NoHeadReEnabled", {Text = "Body Rebuilder", Default = false, Tooltip = 'Resolves No Head'})
+
+--[[End Of Combat]]--
